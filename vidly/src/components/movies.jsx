@@ -1,11 +1,29 @@
 import React, { Component } from "react";
+
+import Pagination from "./common/pagination";
+import ListGroup from "./common/listGroup";
+import MoviesTable from "./moviesTable";
+import { paginate } from "../utils/paginate";
 import { getMovies } from "../services/fakeMovieService";
-import Like from "./common/like";
+import { getGenres } from "../services/fakeGenreService";
 
 class Movies extends Component {
   state = {
-    movies: getMovies()
+    movies: [],
+    genres: [],
+    pageSize: 4,
+    currentPage: 1
   };
+
+  componentDidMount() {
+    /** Here whe create a new variable that has the All Genres object and
+     * using the Spread operator, we copy all the data returned from the
+     * getGenres method, from our fakeService, generating a new array
+     * with the "static" genre All Genres at the beginning
+     */
+    const genres = [{ _id: "0", name: "All Genres" }, ...getGenres()];
+    this.setState({ movies: getMovies(), genres });
+  }
 
   handleDelete = movie => {
     const movies = this.state.movies.filter(m => m._id !== movie._id);
@@ -19,50 +37,66 @@ class Movies extends Component {
     movies[index].liked = !movies[index].liked;
     this.setState({ movies });
   };
+
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
+  };
+
+  handleGenreSelect = genre => {
+    this.setState({ selectedGenre: genre, currentPage: 1 });
+  };
+
   render() {
     const { length: count } = this.state.movies;
+    const {
+      pageSize,
+      currentPage,
+      movies: allMovies,
+      selectedGenre
+    } = this.state;
+
     if (count === 0) return <p>There are no movies in the database.</p>;
 
+    /**  Here we're going to filter the allMovies array to get only the movies
+     * with the selected genre. If there is a selected genre, we'll filter.
+     * Otherwise, we'll return the allMovies array as it is, with no filters
+     * */
+
+    const filtered =
+      selectedGenre && selectedGenre._id !== "0"
+        ? allMovies.filter(m => m.genre._id === selectedGenre._id)
+        : allMovies;
+
+    /** Here we call the paginate method from our pagination component passing
+     * the filtered array, that now has all the movies we want to display on
+     * the list
+     */
+    const movies = paginate(filtered, currentPage, pageSize);
+
     return (
-      <React.Fragment>
-        <p>Showing {count} movies in the database. </p>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Genre</th>
-              <th>Stock</th>
-              <th>Rate</th>
-              <th />
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.movies.map(movie => (
-              <tr key={movie._id}>
-                <td>{movie.title}</td>
-                <td>{movie.genre.name}</td>
-                <td>{movie.numberInStock}</td>
-                <td>{movie.dailyRentalRate}</td>
-                <td>
-                  <Like
-                    liked={movie.liked}
-                    onClick={() => this.handleLike(movie)}
-                  />
-                </td>
-                <td>
-                  <button
-                    onClick={() => this.handleDelete(movie)}
-                    className="btn btn-danger btn-sm"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </React.Fragment>
+      <div className="row">
+        <div className="col-2">
+          <ListGroup
+            items={this.state.genres}
+            selectedItem={this.state.selectedGenre}
+            onItemSelect={this.handleGenreSelect}
+          />
+        </div>
+        <div className="col">
+          <p>Showing {filtered.length} movies in the database. </p>
+          <MoviesTable
+            movies={movies}
+            onLike={this.handleLike}
+            onDelete={this.handleDelete}
+          />
+          <Pagination
+            itemsCount={filtered.length}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={this.handlePageChange}
+          />
+        </div>
+      </div>
     );
   }
 }
