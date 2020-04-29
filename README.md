@@ -8,7 +8,7 @@ This repository will hold source code of the Mastering React Course, by Mosh Ham
 
 In this course I'll start to learn React from scratch and move to advanced topics. Below is a summary of what will be presented in the course:
 
-- Knowing the language and it's basic syntax
+- Knowing the language and its basic syntax
 - How to implement reusable components
 - Pass data through components via props
 - Use the state of components
