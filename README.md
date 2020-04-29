@@ -34,7 +34,7 @@ npm install
 
 ## My remarks
 
-This course is a little outdated, it uses an older version of React and other packages, so a few of the source codes probably won't work on updated versions. Despite this, the teacher's didactics are very good, he tries to focus on the build of reusable and functional components, avoiding code repeating and keeping things simple and organized. He really covers all topics from scratch to advanced, giving hints all the time on how to avoid the most common programming errors, don't letting the code get messy and disorganized. It's a very good course!
+This course is a little outdated, it uses an older version of React and other packages. Despite this, the teacher's didactics are very good, he tries to focus on the build of reusable and functional components, avoiding code repeating and keeping things simple and organized. He really covers all topics from scratch to advanced, giving hints all the time on how to avoid the most common programming errors, don't letting the code get messy and disorganized. It's a very good course!
 
 ## Authors
 
